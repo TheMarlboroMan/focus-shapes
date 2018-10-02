@@ -163,6 +163,10 @@ void controller_example::do_player_collision_check(player& _pl, const std::vecto
 //TODO: Again, use the center as the handle...
 app::defs::tpoly	controller_example::poly_from_points(defs::tpoint _pt, defs::tangle _angle) {
 
+	//TODO: We should be able to use the shape manager to get a shape and
+	//then center it in the center, so to say... 
+	//There's a "poly.rotation_center_in", which we can use and be happy.
+
 	defs::tbox box{_pt.x, _pt.y, 20., 20.};
 	auto poly=ldt::poly_from_box(box);
 	poly.set_rotation_center(poly.get_centroid());
