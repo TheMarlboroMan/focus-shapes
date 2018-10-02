@@ -22,7 +22,7 @@
 #include "../game/player_input.h"
 #include "../game/projectile.h"
 #include "../game/player.h"
-
+#include "../game/shape_manager.h"
 
 namespace app
 {
@@ -57,7 +57,7 @@ class controller_example:
 	void					purge_actors();
 	void					do_player_collision_check(player&, const std::vector<projectile>&);
 
-	defs::tpoly				poly_from_points(defs::tpoint, defs::tangle=0.f);
+	defs::tpoly				poly_from_points(defs::tpoint, shape_manager::tindex, defs::tangle=0.f);
 
 	//references...
 	tools::log&				log;
@@ -65,6 +65,7 @@ class controller_example:
 	//properties
 	tools::ttf_manager			ttf_man;
 	status_keeper				skeeper;
+	shape_manager				shape_man;
 	//TODO: Add multiple players????
 	player					player_instance;
 	std::vector<projectile>			projectiles;
