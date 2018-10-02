@@ -1,0 +1,5 @@
+objects/*
+logs/*
+scripts/*
+*.out
+GETTING_STARTED.txt

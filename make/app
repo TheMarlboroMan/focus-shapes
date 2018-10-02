@@ -1,0 +1,34 @@
+DIR_GAME=./class/game/
+
+#Full list of classes
+
+DEP_APP=\
+$(DIR_O)game_object.o \
+$(DIR_O)projectile.o \
+$(DIR_O)player.o \
+$(DIR_O)shape_manager.o \
+
+
+#Class recipes
+
+$(DIR_O)player.o :\
+$(DIR_O)game_object.o \
+$(DIR_GAME)player.h \
+$(DIR_GAME)player.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)player.cpp -o $(DIR_O)player.o
+
+$(DIR_O)projectile.o :\
+$(DIR_O)game_object.o \
+$(DIR_GAME)projectile.h \
+$(DIR_GAME)projectile.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)projectile.cpp -o $(DIR_O)projectile.o
+
+$(DIR_O)game_object.o :\
+$(DIR_GAME)game_object.h \
+$(DIR_GAME)game_object.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)game_object.cpp -o $(DIR_O)game_object.o
+
+$(DIR_O)shape_manager.o :\
+$(DIR_GAME)shape_manager.h \
+$(DIR_GAME)shape_manager.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)shape_manager.cpp -o $(DIR_O)shape_manager.o

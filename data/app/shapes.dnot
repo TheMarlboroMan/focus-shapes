@@ -1,0 +1,24 @@
+shapes:[
+	{
+		name:"square",
+		id:1,
+		vertices:[
+			{x:0, y:0},
+			{x:10, y:0},
+			{x:10, y:10},
+			{x:0, y:10}
+		],
+		center: {x:5, y:5}
+	},
+	{
+		name:"triangle",
+		id:2,
+		vertices:[
+			{x:0, y:0},
+			{x:10, y:0},
+			{x:5, y:10}
+		],
+		center: {x:5, y:5}
+	}
+],
+other:1

@@ -1,0 +1,36 @@
+#Definitions.
+
+WITH_DEBUG_CODE=-DWDEBUG_CODE
+#DISABLE_ASSERT=-DNDEBUG=1
+#OPTIMIZATION=-O3
+DEBUG=-g
+
+#These are either old or plain stupid :P.
+#OTHER_WARNING_FLAGS=-Wno-deprecated -Wfloat-equal
+WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti 
+#-Wfatal-errors 
+
+FLAGS_BASE=$(WARNING_FLAGS) $(OTHER_WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
+CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
+CFLAGS_TARGET_FINAL=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
+CC=g++
+EXECUTABLE=a.out
+
+DO_CLEAN=if [ -d objects ]; then rm -rf objects; fi;\
+if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
+echo "Dir clean";
+
+DIR_HOME=~/devel/
+DIR_LIBDAN2=$(DIR_HOME)libdansdl2
+DIR_DFW=$(DIR_HOME)dfw/
+DIR_LOG=$(DIR_HOME)log/
+DIR_O_DFW=$(DIR_HOME)dfw/objects/
+DIR_TOOLS=$(DIR_HOME)tools/
+DIR_O_TOOLS=$(DIR_HOME)tools/objects/
+DO_DIR_OBJECTS=mkdir -p objects;
+
+LINKER=-L $(DIR_LIBDAN2) -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
+INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG)/src/
+LIBRARIES=
+
+include make/core
