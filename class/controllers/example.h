@@ -57,7 +57,7 @@ class controller_example:
 	void					purge_actors();
 	void					do_player_collision_check(player&, const std::vector<projectile>&);
 
-	defs::tpoly				poly_from_points(defs::tpoint, shape_manager::tindex, defs::tangle=0.f);
+	defs::tpoly				poly_from_points(defs::tpoint, defs::tshape_index, defs::tangle=0.f);
 
 	//references...
 	tools::log&				log;

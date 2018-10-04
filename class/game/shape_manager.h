@@ -17,8 +17,6 @@ class shape_manager {
 
 	public:
 
-	typedef			int tindex;
-	enum 			type {square=1, triangle};
 
 	//!Creates the instance.
 				shape_manager();
@@ -27,7 +25,7 @@ class shape_manager {
 				shape_manager(const std::string&);
 
 	//!Returns a copy of the indexed shape.
-	defs::tpoly		get(tindex) const;
+	defs::tpoly		get(defs::tshape_index) const;
 
 	//!Truncates the current map and loads a new one from file.
 	void			load(const std::string&);
@@ -39,7 +37,7 @@ class shape_manager {
 	//!Validates and returns a point.
 	defs::tpoint		parse_point(const tools::dnot_token&);
 
-	std::map<tindex, defs::tpoly>	container;
+	std::map<defs::tshape_index, defs::tpoly>	container;
 
 };
 

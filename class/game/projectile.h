@@ -10,20 +10,9 @@ class projectile:
 
 	public:
 
-	//TODO: Separate implementation.
-			projectile(const defs::tpoint _p, const defs::tvector _v):
-		game_object(_p, _v),  angle(0.f) {
-
-	}
-
+			projectile(const defs::tpoint, const defs::tvector, defs::tshape_index=defs::square);
 	defs::tangle	get_angle() const {return angle;}
-
-	//TODO: Separate implementation.
-	void		step(float _delta) {
-
-		do_motion(_delta);
-		angle=angle + (90.f * _delta);
-	}
+	void		step(float);
 	
 	private:
 

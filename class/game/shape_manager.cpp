@@ -13,7 +13,7 @@ shape_manager::shape_manager(const std::string& _filename) {
 	load(_filename);
 }
 
-defs::tpoly shape_manager::get(shape_manager::tindex _t) const {
+defs::tpoly shape_manager::get(defs::tshape_index _t) const {
 
 	if(!container.count(_t)) {
 		throw std::runtime_error("shape_manager could not get shape");

@@ -16,6 +16,10 @@ struct defs {
 	typedef		ldt::point_2d<tunit>	tpoint;
 	typedef		ldt::polygon_2d<tunit>	tpoly;
 	typedef		ldt::box<tunit, tunit>	tbox;
+
+	typedef		int tshape_index;
+	enum 		shape_types {square=1, triangle};
+
 };
 
 

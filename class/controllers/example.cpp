@@ -31,17 +31,21 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 	skeeper.angle+=lid.delta * 90.f;
 	skeeper.angle=fmod(skeeper.angle, 360.f);
 
+	//TODO: Ratio of malus:bonus, fixed 4:1, make it compulsory!
+	//TODO: Change the rules...
 	if(input().is_event_input()) {
 
 		defs::tvector v=vector_from_angle_and_magnitude<defs::tunit>(skeeper.angle, 50);
-		projectiles.push_back(projectile(defs::tpoint(350, 200), v));
+
+		//TODO: Should push some other things...
+		projectiles.push_back(projectile(defs::tpoint(350, 200), v, defs::triangle));
 	}
 
 	//TODO: Allow this...
 	//shape_man.load("data/app/shapes.dnot");
 
 	const auto pi=get_player_input(input);
-	player_instance.get_input(pi);
+	player_instance.set_input(pi);
 
 	for(auto &p : projectiles) {
  		p.step(lid.delta);
@@ -78,24 +82,17 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 
 void controller_example::draw_projectile(ldv::screen& _screen, const projectile& _p) {
 
-	const auto poly=poly_from_points(_p.get_point(), shape_manager::triangle, _p.get_angle());
+	const auto poly=poly_from_points(_p.get_point(), _p.get_shape(), _p.get_angle());
 
 	//Now, this poly is convertible to a drawable type-
 	auto drawable_poly=ldt::representation_from_primitive(poly, ldv::rgba8(255, 0, 0, 128));
 	drawable_poly.set_blend(ldv::representation::blends::alpha);
-
-	//I'd like to draw the bounding box now...
-//	auto drawable_box=ldt::representation_from_primitive(ldt::box_from_poly(poly), ldv::rgba8(255, 255, 255, 64));
-//	drawable_box.set_blend(ldv::representation::blends::alpha);
-
-	//And draw the whole shit.
-//	drawable_box.draw(_screen);
 	drawable_poly.draw(_screen);
 }
 
 void	controller_example::draw_player_instance(ldv::screen& _screen, const player& _p) {
 
-	const auto poly=poly_from_points(_p.get_point(), shape_manager::square);
+	const auto poly=poly_from_points(_p.get_point(), _p.get_shape());
 
 	auto color=_p.is_invulnerable() 
 		? ldv::rgba8(255, 255, 255, _p.get_life()) 
@@ -136,7 +133,7 @@ void controller_example::purge_actors() {
 
 		//TODO: This is a bit absurd... 
 		//We could just check a center and some margin against the box.
-		const auto poly=poly_from_points(_p.get_point(), shape_manager::triangle, _p.get_angle());
+		const auto poly=poly_from_points(_p.get_point(), _p.get_shape(), _p.get_angle());
 		return !ldt::box_from_poly(poly).collides_with(screen_bound);
 	});
 
@@ -147,18 +144,18 @@ void controller_example::purge_actors() {
 void controller_example::do_player_collision_check(player& _pl, const std::vector<projectile>& _vp) {
 
 	//TODO: The poly from points is starting to get boring.... The class should know.
-	const auto player_poly=poly_from_points(_pl.get_point(), shape_manager::square);
+	const auto player_poly=poly_from_points(_pl.get_point(), _pl.get_shape());
 
 	for(const auto& p: _vp) {
 		//TODO :Use bounding boxes, check if we can go faster that way!.
-		const auto poly=poly_from_points(p.get_point(), shape_manager::triangle, p.get_angle());
+		const auto poly=poly_from_points(p.get_point(), p.get_shape(), p.get_angle());
 		if(ldt::SAT_collision_check(player_poly, poly)) {
 			_pl.hit();
 		}
 	}
 }
 
-app::defs::tpoly	controller_example::poly_from_points(defs::tpoint _pt, shape_manager::tindex _type, defs::tangle _angle) {
+app::defs::tpoly controller_example::poly_from_points(defs::tpoint _pt, defs::tshape_index _type, defs::tangle _angle) {
 
 	auto poly=shape_man.get(_type);
 	poly.rotation_center_in(_pt);
