@@ -9,8 +9,8 @@
 
 //app
 #include "../game/player_input.h"
-
-
+#include "../game/drawable.h"
+#include "../game/draw_struct.h"
 
 using namespace app;
 
@@ -78,11 +78,17 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
-	for(auto &go : game_objects) {
-		draw_game_object(_screen, *go);
-	}
+	//Create and fill drawable array...
+	std::vector<const drawable *>	drawables;
+	drawables.reserve(game_objects.size()+1); 
 
-	draw_player_instance(_screen, player_instance);
+	//TODO: Fill up the drawables!!!
+
+	draw_struct ds(shape_man);
+	for(const auto& d : drawables) {
+		d->transform_draw_struct(ds);
+		ds.rep->draw(_screen);
+	}
 
 	const auto& font=ttf_man.get("main_font", 10);
 	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), std::to_string(game_objects.size())+" FPS: "+std::to_string(_fps)); 
@@ -101,47 +107,6 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 	);
 
 	txt_score.draw(_screen);
-}
-
-void controller_example::draw_game_object(ldv::screen& _screen, const game_object& _p) {
-
-	//TODO: Fuck this, create the drawable interface that will return
-	//whatever it needs. Abstract this away...  should look like:
-/*
-	drawable_struct ds;
-	_p.draw_info(ds);
-	ds.draw(screen);
-
-We can use the draw_struct present in dfw_jumpstart, but the poly thing... the
-poly thing will not last: all we can do is give some points to it but maybe 
-that's enough... there's a get_vertices which we could use but in the end
-we would just be going "poly from cache" -> "poly to drawable" -> "get points
-from drawable".... You know what? Fine by me... My question here is, 
-how will they access the shape manager?. Through the drawable struct, I guess.
-
-*/
-
-	//TODO: Shit...
-	const auto poly=poly_from_points(_p.get_point(), _p.get_shape(), 0.f /*_p.get_angle()*/);
-
-	//Now, this poly is convertible to a drawable type-
-	//TODO: What about the color????
-	auto drawable_poly=ldt::representation_from_primitive(poly, ldv::rgba8(255, 0, 0, 128));
-	drawable_poly.set_blend(ldv::representation::blends::alpha);
-	drawable_poly.draw(_screen);
-}
-
-void	controller_example::draw_player_instance(ldv::screen& _screen, const player& _p) {
-
-	const auto poly=poly_from_points(_p.get_point(), _p.get_shape());
-
-	auto color=_p.is_invulnerable() 
-		? ldv::rgba8(255, 255, 255, _p.get_life()) 
-		: ldv::rgba8(0, 0, 255, _p.get_life());
-
-	auto drawable_poly=ldt::representation_from_primitive(poly, color);
-	drawable_poly.set_blend(ldv::representation::blends::alpha);
-	drawable_poly.draw(_screen);
 }
 
 player_input controller_example::get_player_input(dfw::input& _input) {
@@ -170,6 +135,8 @@ void controller_example::purge_actors() {
 	//TODO: This should not be... And you know it. Use the app config data.
 	defs::tbox screen_bound={0,0,700,500};
 
+//TODO: Oh crap.I removed poly from points...
+/*
 	auto it=std::remove_if(std::begin(game_objects), std::end(game_objects), [screen_bound, this](const tptr_game_object& _ptr) {
 
 		const auto& go=*_ptr;
@@ -178,17 +145,19 @@ void controller_example::purge_actors() {
 		//We could just check a center and some margin against the box.
 
 		//TODO: Shit...
-		const auto poly=poly_from_points(go.get_point(), go.get_shape(), 0.f /*go.get_angle()*/);
+		const auto poly=poly_from_points(go.get_point(), go.get_shape(), go.get_angle());
 		return !ldt::box_from_poly(poly).collides_with(screen_bound);
 	});
 
 	game_objects.erase(it, std::end(game_objects));
+*/
 }
 
 
 void controller_example::do_player_collision_check(player& _pl, const std::vector<tptr_game_object>& _vp) {
 
-	//TODO: The poly from points is starting to get boring.... The class should know.
+/*
+TODO: I removed poly from points... crap
 	const auto player_poly=poly_from_points(_pl.get_point(), _pl.get_shape());
 
 	for(const auto& p: _vp) {
@@ -196,22 +165,12 @@ void controller_example::do_player_collision_check(player& _pl, const std::vecto
 		const auto& go=*p;
 		//TODO :Use bounding boxes, check if we can go faster that way!.
 		//TODO: Shit
-		const auto poly=poly_from_points(go.get_point(), go.get_shape(), 0.f /*go.get_angle()*/);
+		const auto poly=poly_from_points(go.get_point(), go.get_shape(), go.get_angle());
 		if(ldt::SAT_collision_check(player_poly, poly)) {
 
 			//TODO: Will need some more work.
 			_pl.hit();
 		}
 	}
-}
-
-app::defs::tpoly controller_example::poly_from_points(defs::tpoint _pt, defs::tshape_index _type, defs::tangle _angle) {
-
-	auto poly=shape_man.get(_type);
-	poly.rotation_center_in(_pt);
-	if(_angle) {
-		poly.rotate(_angle);
-	}
-
-	return poly;
+*/
 }

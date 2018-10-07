@@ -35,3 +35,29 @@ void player::step(float _delta) {
 		invulnerability_time=invulnerability_time > 0.f ? invulnerability_time : 0.f;
 	}
 }
+
+void player::transform_draw_struct(draw_struct& _ds) const {
+
+/*
+	auto poly=shape_man.get(_type);
+	poly.rotation_center_in(_pt);
+	if(_angle) {
+		poly.rotate(_angle);
+	}
+
+	return poly;
+
+	const auto poly=poly_from_points(_p.get_point(), _p.get_shape());
+
+	auto color=_p.is_invulnerable() 
+		? ldv::rgba8(255, 255, 255, _p.get_life()) 
+		: ldv::rgba8(0, 0, 255, _p.get_life());
+
+	auto drawable_poly=ldt::representation_from_primitive(poly, color);
+	drawable_poly.set_blend(ldv::representation::blends::alpha);
+	drawable_poly.draw(_screen);
+*/
+
+	//TODO: Just so we can compile.
+	_ds.rep;
+}

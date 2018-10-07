@@ -69,13 +69,9 @@ class controller_example:
 
 	typedef	std::unique_ptr<game_object>	tptr_game_object;
 
-	void					draw_game_object(ldv::screen&, const game_object&);
-	void					draw_player_instance(ldv::screen&, const player&);
 	player_input				get_player_input(dfw::input&);
 	void					purge_actors();
 	void					do_player_collision_check(player&, const std::vector<tptr_game_object>&);
-
-	defs::tpoly				poly_from_points(defs::tpoint, defs::tshape_index, defs::tangle=0.f);
 
 	//references...
 	tools::log&				log;
@@ -87,7 +83,6 @@ class controller_example:
 	shape_manager				shape_man;
 	//TODO: Add multiple players????
 	player					player_instance;
-	//std::vector<projectile>		projectiles;
 	std::vector<tptr_game_object>		game_objects;
 
 };

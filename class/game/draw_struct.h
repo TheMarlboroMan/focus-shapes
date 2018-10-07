@@ -8,6 +8,8 @@
 #include <video/representation/primitive/line/line_representation.h>
 #include <video/representation/primitive/polygon/polygon_representation.h>
 
+#include "shape_manager.h"
+
 //Lazy drawing solution... This class has an item of each kind of common 
 //representation (minus ttf). Instead of creating and discarding representations
 //for each drawable, this structure can be passed and its representations
@@ -34,7 +36,7 @@ struct draw_struct
 	///////////////////////////////////
 	// Public interface
 
-								draw_struct();
+								draw_struct(const shape_manager&);
 								~draw_struct();
 
 	//////////
@@ -101,6 +103,7 @@ struct draw_struct
 	ldv::polygon_representation 			rep_polygon;
 	ldv::representation * 				rep;
 	types 						type;
+	const shape_manager&				shape_man;
 };
 
 }

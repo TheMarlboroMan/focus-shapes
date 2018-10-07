@@ -3,11 +3,13 @@
 
 #include "game_object.h"
 #include "player_input.h"
+#include "drawable.h"
 
 namespace app {
 
 class player:
-	public game_object {
+	public game_object,
+	public drawable {
 
 	public:
 
@@ -19,6 +21,11 @@ class player:
 
 	void		hit();
 	void		set_input(const player_input _pi);
+
+	//Drawable implementation --------------------
+	void		transform_draw_struct(draw_struct&) const;
+
+	//Game object implementation -----------------
 	void		step(float _delta);
 
 	private:
