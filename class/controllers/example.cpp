@@ -19,6 +19,10 @@ controller_example::controller_example(tools::log& plog)
 
 	//TODO: This should be injected somewhere else...
 	ttf_man.insert("main_font", 10, "data/fonts/ConsolaMono.ttf");
+	ttf_man.insert("main_font", 20, "data/fonts/ConsolaMono.ttf");
+
+	//TODO: Help yourself to a constant.
+	game_objects.reserve(1000);
 }
 
 void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
@@ -33,12 +37,17 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 
 	//TODO: Ratio of malus:bonus, fixed 4:1, make it compulsory!
 	//TODO: Change the rules...
+	//TODO: Keep a maximum number of them.
 	if(input().is_event_input()) {
 
 		defs::tvector v=vector_from_angle_and_magnitude<defs::tunit>(skeeper.angle, 50);
 
 		//TODO: Should push some other things...
-		projectiles.push_back(projectile(defs::tpoint(350, 200), v, defs::triangle));
+		game_objects.push_back(
+			tptr_game_object(
+				new projectile(defs::tpoint(350, 200), v, defs::triangle)
+			)
+		);
 	}
 
 	//TODO: Allow this...
@@ -47,8 +56,8 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 	const auto pi=get_player_input(input);
 	player_instance.set_input(pi);
 
-	for(auto &p : projectiles) {
- 		p.step(lid.delta);
+	for(auto &go : game_objects) {
+ 		go->step(lid.delta);
 	}
 
 	player_instance.step(lid.delta);
@@ -57,7 +66,7 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 
 	//TODO: Players should have a "tail" or something.
 
-	do_player_collision_check(player_instance, projectiles);
+	do_player_collision_check(player_instance, game_objects);
 
 	if(!player_instance.has_life()) {
 		set_leave(true);
@@ -69,22 +78,54 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
-	for(auto &p : projectiles) {
-		draw_projectile(_screen, p);
+	for(auto &go : game_objects) {
+		draw_game_object(_screen, *go);
 	}
 
 	draw_player_instance(_screen, player_instance);
 
 	const auto& font=ttf_man.get("main_font", 10);
-	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), std::to_string(projectiles.size())+" FPS: "+std::to_string(_fps)); 
+	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), std::to_string(game_objects.size())+" FPS: "+std::to_string(_fps)); 
 	txt.draw(_screen);
+
+	//Draw score...
+	const auto& score_font=ttf_man.get("main_font", 20);
+	ldv::ttf_representation txt_score(score_font, ldv::rgba8(255,255,255,255), std::to_string(gdata.score)); 
+	txt_score.align(
+		ldv::rect(0,0, _screen.get_w(), _screen.get_h()),
+		ldv::representation_alignment{
+			ldv::representation_alignment::h::center,
+			ldv::representation_alignment::v::inner_top,
+			0, 0
+		}
+	);
+
+	txt_score.draw(_screen);
 }
 
-void controller_example::draw_projectile(ldv::screen& _screen, const projectile& _p) {
+void controller_example::draw_game_object(ldv::screen& _screen, const game_object& _p) {
 
-	const auto poly=poly_from_points(_p.get_point(), _p.get_shape(), _p.get_angle());
+	//TODO: Fuck this, create the drawable interface that will return
+	//whatever it needs. Abstract this away...  should look like:
+/*
+	drawable_struct ds;
+	_p.draw_info(ds);
+	ds.draw(screen);
+
+We can use the draw_struct present in dfw_jumpstart, but the poly thing... the
+poly thing will not last: all we can do is give some points to it but maybe 
+that's enough... there's a get_vertices which we could use but in the end
+we would just be going "poly from cache" -> "poly to drawable" -> "get points
+from drawable".... You know what? Fine by me... My question here is, 
+how will they access the shape manager?. Through the drawable struct, I guess.
+
+*/
+
+	//TODO: Shit...
+	const auto poly=poly_from_points(_p.get_point(), _p.get_shape(), 0.f /*_p.get_angle()*/);
 
 	//Now, this poly is convertible to a drawable type-
+	//TODO: What about the color????
 	auto drawable_poly=ldt::representation_from_primitive(poly, ldv::rgba8(255, 0, 0, 128));
 	drawable_poly.set_blend(ldv::representation::blends::alpha);
 	drawable_poly.draw(_screen);
@@ -129,27 +170,36 @@ void controller_example::purge_actors() {
 	//TODO: This should not be... And you know it. Use the app config data.
 	defs::tbox screen_bound={0,0,700,500};
 
-	auto it=std::remove_if(std::begin(projectiles), std::end(projectiles), [screen_bound, this](const projectile& _p) {
+	auto it=std::remove_if(std::begin(game_objects), std::end(game_objects), [screen_bound, this](const tptr_game_object& _ptr) {
+
+		const auto& go=*_ptr;
 
 		//TODO: This is a bit absurd... 
 		//We could just check a center and some margin against the box.
-		const auto poly=poly_from_points(_p.get_point(), _p.get_shape(), _p.get_angle());
+
+		//TODO: Shit...
+		const auto poly=poly_from_points(go.get_point(), go.get_shape(), 0.f /*go.get_angle()*/);
 		return !ldt::box_from_poly(poly).collides_with(screen_bound);
 	});
 
-	projectiles.erase(it, std::end(projectiles));
+	game_objects.erase(it, std::end(game_objects));
 }
 
 
-void controller_example::do_player_collision_check(player& _pl, const std::vector<projectile>& _vp) {
+void controller_example::do_player_collision_check(player& _pl, const std::vector<tptr_game_object>& _vp) {
 
 	//TODO: The poly from points is starting to get boring.... The class should know.
 	const auto player_poly=poly_from_points(_pl.get_point(), _pl.get_shape());
 
 	for(const auto& p: _vp) {
+
+		const auto& go=*p;
 		//TODO :Use bounding boxes, check if we can go faster that way!.
-		const auto poly=poly_from_points(p.get_point(), p.get_shape(), p.get_angle());
+		//TODO: Shit
+		const auto poly=poly_from_points(go.get_point(), go.get_shape(), 0.f /*go.get_angle()*/);
 		if(ldt::SAT_collision_check(player_poly, poly)) {
+
+			//TODO: Will need some more work.
 			_pl.hit();
 		}
 	}

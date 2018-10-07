@@ -5,8 +5,10 @@ DIR_GAME=./class/game/
 DEP_APP=\
 $(DIR_O)game_object.o \
 $(DIR_O)projectile.o \
+$(DIR_O)bonus.o \
 $(DIR_O)player.o \
 $(DIR_O)shape_manager.o \
+$(DIR_O)draw_struct.o \
 
 
 #Class recipes
@@ -16,6 +18,12 @@ $(DIR_O)game_object.o \
 $(DIR_GAME)player.h \
 $(DIR_GAME)player.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)player.cpp -o $(DIR_O)player.o
+
+$(DIR_O)bonus.o :\
+$(DIR_O)game_object.o \
+$(DIR_GAME)bonus.h \
+$(DIR_GAME)bonus.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)bonus.cpp -o $(DIR_O)bonus.o
 
 $(DIR_O)projectile.o :\
 $(DIR_O)game_object.o \
@@ -32,3 +40,8 @@ $(DIR_O)shape_manager.o :\
 $(DIR_GAME)shape_manager.h \
 $(DIR_GAME)shape_manager.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)shape_manager.cpp -o $(DIR_O)shape_manager.o
+
+$(DIR_O)draw_struct.o :\
+$(DIR_GAME)draw_struct.h \
+$(DIR_GAME)draw_struct.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)draw_struct.cpp -o $(DIR_O)draw_struct.o

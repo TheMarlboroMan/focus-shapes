@@ -17,9 +17,11 @@ class game_object {
 	void			set_vector_x(defs::tunit _v) {vector.x=_v;}
 	void			set_vector_y(defs::tunit _v) {vector.y=_v;}
 
+	virtual	void		step(float _delta)=0;
+
 	protected:
 
-	void		do_motion(float _delta);
+	void			do_motion(float _delta);
 
 	private:
 
