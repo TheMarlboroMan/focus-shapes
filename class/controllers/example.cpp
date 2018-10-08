@@ -87,6 +87,8 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 
 	//TODO: Fill up the drawables from all game objects...
 
+	//TODO: Perhaps all game objects can return some flags and we can filter dem?
+
 	draw_struct ds(shape_man);
 	for(const auto& d : drawables) {
 		d->transform_draw_struct(ds);
