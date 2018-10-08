@@ -38,26 +38,25 @@ void player::step(float _delta) {
 
 void player::transform_draw_struct(draw_struct& _ds) const {
 
-/*
-	auto poly=shape_man.get(_type);
-	poly.rotation_center_in(_pt);
-	if(_angle) {
-		poly.rotate(_angle);
-	}
-
-	return poly;
-
-	const auto poly=poly_from_points(_p.get_point(), _p.get_shape());
+	const auto poly=get_poly(_ds.shape_man);
 
 	auto color=_p.is_invulnerable() 
 		? ldv::rgba8(255, 255, 255, _p.get_life()) 
 		: ldv::rgba8(0, 0, 255, _p.get_life());
 
 	auto drawable_poly=ldt::representation_from_primitive(poly, color);
-	drawable_poly.set_blend(ldv::representation::blends::alpha);
-	drawable_poly.draw(_screen);
-*/
 
-	//TODO: Just so we can compile.
-	_ds.rep;
+/*
+	_ds.set_type(x);
+	_ds.set_poly(drawable_poly);
+	_ds.set_blend(ldv::representation::blends::alpha);
+*/
+}
+
+defs::tpoly player::get_poly(const shape_manager& _shape_man) const {
+
+	auto poly=_shape_man.get(get_shape());
+	poly.rotation_center_in(get_point());
+
+	return poly;
 }

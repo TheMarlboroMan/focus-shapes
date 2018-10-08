@@ -9,7 +9,8 @@ namespace app {
 
 class player:
 	public game_object,
-	public drawable {
+	public drawable,
+	public spatiable {
 
 	public:
 
@@ -21,6 +22,9 @@ class player:
 
 	void		hit();
 	void		set_input(const player_input _pi);
+
+	//Spatiable implementation
+	defs::tpoly	get_poly(const shape_manager&) const;
 
 	//Drawable implementation --------------------
 	void		transform_draw_struct(draw_struct&) const;

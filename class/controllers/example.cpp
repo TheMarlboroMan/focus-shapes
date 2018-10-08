@@ -38,11 +38,14 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 	//TODO: Ratio of malus:bonus, fixed 4:1, make it compulsory!
 	//TODO: Change the rules...
 	//TODO: Keep a maximum number of them.
+
+	//TODO: How do we keep drawables and spatiables?
+
 	if(input().is_event_input()) {
 
 		defs::tvector v=vector_from_angle_and_magnitude<defs::tunit>(skeeper.angle, 50);
 
-		//TODO: Should push some other things...
+		//TODO: Push bonuses too.
 		game_objects.push_back(
 			tptr_game_object(
 				new projectile(defs::tpoint(350, 200), v, defs::triangle)
@@ -82,7 +85,7 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 	std::vector<const drawable *>	drawables;
 	drawables.reserve(game_objects.size()+1); 
 
-	//TODO: Fill up the drawables!!!
+	//TODO: Fill up the drawables from all game objects...
 
 	draw_struct ds(shape_man);
 	for(const auto& d : drawables) {
@@ -135,17 +138,15 @@ void controller_example::purge_actors() {
 	//TODO: This should not be... And you know it. Use the app config data.
 	defs::tbox screen_bound={0,0,700,500};
 
-//TODO: Oh crap.I removed poly from points...
+//TODO: Oh crap. not all of dem will be spatiables...
 /*
 	auto it=std::remove_if(std::begin(game_objects), std::end(game_objects), [screen_bound, this](const tptr_game_object& _ptr) {
 
+
+		//TODO: This is a bit absurd... We could just check a center and some margin against the box.
+
 		const auto& go=*_ptr;
-
-		//TODO: This is a bit absurd... 
-		//We could just check a center and some margin against the box.
-
-		//TODO: Shit...
-		const auto poly=poly_from_points(go.get_point(), go.get_shape(), go.get_angle());
+		const auto poly=go.get_poly(shape_man);
 		return !ldt::box_from_poly(poly).collides_with(screen_bound);
 	});
 
@@ -157,18 +158,17 @@ void controller_example::purge_actors() {
 void controller_example::do_player_collision_check(player& _pl, const std::vector<tptr_game_object>& _vp) {
 
 /*
-TODO: I removed poly from points... crap
-	const auto player_poly=poly_from_points(_pl.get_point(), _pl.get_shape());
+	const auto player_poly=_pl.get_poly(shape_man);
 
 	for(const auto& p: _vp) {
 
 		const auto& go=*p;
 		//TODO :Use bounding boxes, check if we can go faster that way!.
-		//TODO: Shit
-		const auto poly=poly_from_points(go.get_point(), go.get_shape(), go.get_angle());
+
+		const auto poly=go.get_poly(shape_man);
 		if(ldt::SAT_collision_check(player_poly, poly)) {
 
-			//TODO: Will need some more work.
+			//TODO: Will need some more work to separate bonuses and stuff.
 			_pl.hit();
 		}
 	}

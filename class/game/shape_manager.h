@@ -8,7 +8,6 @@
 
 #include "defs.h"
 
-
 namespace app {
 
 //!Manages the shapes. Should be loaded with a different class.
