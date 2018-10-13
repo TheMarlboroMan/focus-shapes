@@ -22,15 +22,17 @@ void world::step(float _delta, const shape_manager& _shape_man) {
 
 	crap+=_delta;
 
+	//TODO: Create emitters.
+	//TODO: Keep a maximum size of shit!!!!
+
 	if(crap > 0.2f) {
 		crap=0.f;
-
 
 		tools::int_generator gen(1, 5);
 		defs::tvector v=vector_from_angle_and_magnitude<defs::tunit>(skeeper.angle, 50);
 		
 		if(1!=gen()) {
-			//TODO: Keep a maximum size of shit!!!!
+
 			projectiles.push_back(
 				tptr_projectile(
 					new projectile(defs::tpoint(350, 200), v)

@@ -1,0 +1,4 @@
+- Separate player and player_segments
+- Create emitters.
+- Add extend bonus.
+- Add combo system.
