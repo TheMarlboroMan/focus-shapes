@@ -72,6 +72,7 @@ class controller_example:
 	//TODO: Add multiple players????
 	//TODO: Move player to the world???
 	player					player_instance;
+	float					stupid;
 };
 
 }

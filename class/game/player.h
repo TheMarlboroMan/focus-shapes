@@ -27,6 +27,11 @@ class player {
 
 	private:
 
+	static const float		inv_time;
+	static const double		speed;
+	static const int		max_segment_radius=8;
+	static const size_t		max_length=10;
+
 	std::vector<player_segment>	segments;
 
 	float		invulnerability_time;

@@ -82,7 +82,8 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 		{input_description_from_config_token(config.token_from_path("config:input:left")), input_app::left},
 		{input_description_from_config_token(config.token_from_path("config:input:right")), input_app::right},
 		{input_description_from_config_token(config.token_from_path("config:input:up")), input_app::up},
-		{input_description_from_config_token(config.token_from_path("config:input:down")), input_app::down}
+		{input_description_from_config_token(config.token_from_path("config:input:down")), input_app::down},
+		{input_description_from_config_token(config.token_from_path("config:input:space")), input_app::space}
 	};
 
 	kernel.init_input_system(pairs);

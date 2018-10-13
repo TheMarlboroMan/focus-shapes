@@ -2,16 +2,20 @@
 
 using namespace app;
 
+const float player::inv_time=1.0f;
+const double player::speed=100.0;
+
 player::player():
 	invulnerability_time{0.f} {
 
+	//Add the original segment.
 	segments.push_back({invulnerability_time, {0.,0.}});
 }
 
 void player::hit() {
 
 	if(!invulnerability_time) {
-		invulnerability_time=1.0f;
+		invulnerability_time=inv_time;
 		segments.pop_back();
 	}
 }
@@ -30,14 +34,14 @@ void player::set_input(const player_input _pi) {
 		}
 		//The others set their vector relative to the previous...
 		else {
-			if(prev->get_point().distance_to(s.get_point()) >= 8) {
+			if(prev->get_point().distance_to(s.get_point()) >= max_segment_radius) {
 				v=ldt::vector_from_points(s.get_point(), prev->get_point());
 			}
 		}
 
 		if(v.x || v.y) {
 			v.normalize();
-			s.set_vector(v*100.);
+			s.set_vector(v*speed);
 		}
 
 		prev=&s;
@@ -69,12 +73,16 @@ std::vector<spatiable const *> player::get_spatiables() const {
 	for(const auto& i : segments) {
 		result.push_back(&i);
 	}
+
 	return result;
 }
 
 void player::add_segment() {
 
-	player_segment s{invulnerability_time, segments.back().get_point()};
-	segments.push_back(s);
-	invulnerability_time=1.f;
+	if(get_length() < max_length) {
+
+		player_segment s{invulnerability_time, segments.back().get_point()};
+		segments.push_back(s);
+		invulnerability_time=inv_time;
+	}
 }

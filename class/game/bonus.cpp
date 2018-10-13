@@ -32,7 +32,7 @@ defs::tpoly bonus::get_poly(const shape_manager& _shape_man) const {
 	return poly;
 }
 
-void bonus::confirm_collision(collision_data& _cd) {
+void bonus::confirm_collision(collision_data& _cd, size_t /*_index*/) {
 
 	if(!erase_me) {
 		_cd.score+=100;

@@ -6,9 +6,10 @@ namespace app {
 struct player_input {
 
 	int		x, y;
+	bool		activate;
 	
 			player_input():
-				x{0}, y{0} {
+				x{0}, y{0}, activate{false} {
 	}
 };
 

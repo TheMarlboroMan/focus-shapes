@@ -17,7 +17,7 @@ class projectile:
 	bool		must_be_erased() const {return erase_me;}
 
 	//collisionable+spatiable implementation
-	void	 		confirm_collision(collision_data& _cd);
+	void	 		confirm_collision(collision_data& _cd, size_t);
 	defs::tpoly		get_poly(const shape_manager&) const;
 	defs::tshape_index	get_shape() const {return defs::triangle;}
 
