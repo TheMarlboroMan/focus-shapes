@@ -8,6 +8,7 @@ $(DIR_O)spatiable.o \
 $(DIR_O)projectile.o \
 $(DIR_O)bonus.o \
 $(DIR_O)player.o \
+$(DIR_O)player_segment.o \
 $(DIR_O)shape_manager.o \
 $(DIR_O)draw_struct.o \
 
@@ -21,9 +22,15 @@ $(DIR_GAME)world.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)world.cpp -o $(DIR_O)world.o
 
 $(DIR_O)player.o :\
+$(DIR_O)player_segment.o \
 $(DIR_GAME)player.h \
 $(DIR_GAME)player.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)player.cpp -o $(DIR_O)player.o
+
+$(DIR_O)player_segment.o :\
+$(DIR_GAME)player_segment.h \
+$(DIR_GAME)player_segment.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_GAME)player_segment.cpp -o $(DIR_O)player_segment.o
 
 $(DIR_O)bonus.o :\
 $(DIR_GAME)bonus.h \

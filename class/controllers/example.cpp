@@ -43,7 +43,7 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 
 	do_player_collision_check(player_instance, world_instance.get_collisionables());
 
-	if(!player_instance.has_life()) {
+	if(!player_instance.get_length()) {
 		set_leave(true);
 		return;
 	}
@@ -124,8 +124,10 @@ void controller_example::do_player_collision_check(player& _pl, const std::vecto
 	}
 
 	if(cdata.score) {
+		//TODO: Add multiplier.
 		gdata.score+=cdata.score;
-		//TODO: Just for funky purposes: add a segment.
+		//TODO: Add segment with a different, rarer thing.
+		//TODO: Have a maximum of segments.
 		_pl.add_segment();
 	}
 }
