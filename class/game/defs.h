@@ -18,7 +18,7 @@ struct defs {
 	typedef		ldt::box<tunit, tunit>	tbox;
 
 	typedef		int tshape_index;
-	enum 		shape_types {square=1, triangle};
+	enum 		shape_types {square=1, triangle, pentagon};
 
 };
 

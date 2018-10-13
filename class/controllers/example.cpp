@@ -2,8 +2,6 @@
 
 #include <algorithm>
 
-#include <tools/converters/converters.h>
-
 //local
 #include "../input.h"
 
@@ -15,14 +13,16 @@
 using namespace app;
 
 controller_example::controller_example(tools::log& plog)
-	:log(plog), shape_man("data/app/shapes.dnot") {
+	:log(plog), 
+	//TODO: fuck this
+	camera(ldv::rect(0,0,700,500), ldv::point(0,0)),
+	shape_man("data/app/shapes.dnot") {
+
+	camera.set_coordinate_system(ldv::camera::tsystem::cartesian);
 
 	//TODO: This should be injected somewhere else...
 	ttf_man.insert("main_font", 10, "data/fonts/ConsolaMono.ttf");
 	ttf_man.insert("main_font", 20, "data/fonts/ConsolaMono.ttf");
-
-	//TODO: Help yourself to a constant.
-	game_objects.reserve(1000);
 }
 
 void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
@@ -32,44 +32,17 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 		return;
 	}
 
-	skeeper.angle+=lid.delta * 90.f;
-	skeeper.angle=fmod(skeeper.angle, 360.f);
-
-	//TODO: Ratio of malus:bonus, fixed 4:1, make it compulsory!
-	//TODO: Change the rules...
-	//TODO: Keep a maximum number of them.
-
-	//TODO: How do we keep drawables and spatiables?
-
-	if(input().is_event_input()) {
-
-		defs::tvector v=vector_from_angle_and_magnitude<defs::tunit>(skeeper.angle, 50);
-
-		//TODO: Push bonuses too.
-		game_objects.push_back(
-			tptr_game_object(
-				new projectile(defs::tpoint(350, 200), v, defs::triangle)
-			)
-		);
-	}
+	world_instance.step(lid.delta, shape_man);
 
 	//TODO: Allow this...
 	//shape_man.load("data/app/shapes.dnot");
 
 	const auto pi=get_player_input(input);
 	player_instance.set_input(pi);
-
-	for(auto &go : game_objects) {
- 		go->step(lid.delta);
-	}
-
 	player_instance.step(lid.delta);
 
-	purge_actors();
-
 	//TODO: Players should have a "tail" or something.
-
-	do_player_collision_check(player_instance, game_objects);
+	do_player_collision_check(player_instance, world_instance.get_collisionables());
 
 	if(!player_instance.has_life()) {
 		set_leave(true);
@@ -79,24 +52,22 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 
 void controller_example::draw(ldv::screen& _screen, int _fps) {
 
+	//TODO: Perhaps a funky background?
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
 	//Create and fill drawable array...
 	std::vector<const drawable *>	drawables;
-	drawables.reserve(game_objects.size()+1); 
-
-	//TODO: Fill up the drawables from all game objects...
-
-	//TODO: Perhaps all game objects can return some flags and we can filter dem?
+	drawables.push_back(&player_instance);
+	world_instance.add_drawables(drawables);
 
 	draw_struct ds(shape_man);
 	for(const auto& d : drawables) {
 		d->transform_draw_struct(ds);
-		ds.rep->draw(_screen);
+		ds.rep->draw(_screen, camera); 
 	}
 
 	const auto& font=ttf_man.get("main_font", 10);
-	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), std::to_string(game_objects.size())+" FPS: "+std::to_string(_fps)); 
+	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), std::to_string(world_instance.get_object_count())+" FPS: "+std::to_string(_fps)); 
 	txt.draw(_screen);
 
 	//Draw score...
@@ -119,10 +90,10 @@ player_input controller_example::get_player_input(dfw::input& _input) {
 	player_input result;
 
 	if(_input.is_input_pressed(app::input_app::down)) {
-		result.y=1;
+		result.y=-1;
 	}
 	else if(_input.is_input_pressed(app::input_app::up)) {
-		result.y=-1;
+		result.y=1;
 	}
 
 	if(_input.is_input_pressed(app::input_app::left)) {
@@ -135,38 +106,12 @@ player_input controller_example::get_player_input(dfw::input& _input) {
 	return result;
 }
 
-void controller_example::purge_actors() {
+void controller_example::do_player_collision_check(player& _pl, const std::vector<const spatiable *>& _vs) {
 
-	//TODO: This should not be... And you know it. Use the app config data.
-	defs::tbox screen_bound={0,0,700,500};
-
-//TODO: Oh crap. not all of dem will be spatiables...
-/*
-	auto it=std::remove_if(std::begin(game_objects), std::end(game_objects), [screen_bound, this](const tptr_game_object& _ptr) {
-
-
-		//TODO: This is a bit absurd... We could just check a center and some margin against the box.
-
-		const auto& go=*_ptr;
-		const auto poly=go.get_poly(shape_man);
-		return !ldt::box_from_poly(poly).collides_with(screen_bound);
-	});
-
-	game_objects.erase(it, std::end(game_objects));
-*/
-}
-
-
-void controller_example::do_player_collision_check(player& _pl, const std::vector<tptr_game_object>& _vp) {
-
-/*
 	const auto player_poly=_pl.get_poly(shape_man);
-
-	for(const auto& p: _vp) {
+	for(const auto& p: _vs) {
 
 		const auto& go=*p;
-		//TODO :Use bounding boxes, check if we can go faster that way!.
-
 		const auto poly=go.get_poly(shape_man);
 		if(ldt::SAT_collision_check(player_poly, poly)) {
 
@@ -174,5 +119,4 @@ void controller_example::do_player_collision_check(player& _pl, const std::vecto
 			_pl.hit();
 		}
 	}
-*/
 }

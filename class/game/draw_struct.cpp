@@ -1,4 +1,7 @@
 #include "draw_struct.h"
+
+#include <algorithm>
+
 #include <templates/compatibility_patches.h>
 
 using namespace app;
@@ -21,6 +24,13 @@ draw_struct::~draw_struct() {
 }
 
 void draw_struct::set_color(ldv::rgb_color c) {
+	rep_points.set_color(c);
+	rep_box.set_color(c);
+	rep_line.set_color(c);
+	rep_polygon.set_color(c);
+}
+
+void draw_struct::set_color(ldv::rgba_color c) {
 	rep_points.set_color(c);
 	rep_box.set_color(c);
 	rep_line.set_color(c);
@@ -96,4 +106,18 @@ void draw_struct::set_external(ldv::representation& p_rep) {
 void draw_struct::set_primitive_fill(ldv::polygon_representation::type f) {
 	rep_polygon.set_filltype(f);
 	rep_box.set_filltype(f);
+}
+
+void draw_struct::set_polygon_points(const std::vector<ldv::point>& _p, bool _invert_y) {
+
+	if(!_invert_y) {
+		rep_polygon.set_points(_p);
+	}
+	else {
+		std::vector<ldv::point> inverted(_p.size());
+		std::transform(std::begin(_p), std::end(_p), std::begin(inverted), [](const ldv::point& _pt) {
+			return ldv::point(_pt.x, -_pt.y);
+		});
+		rep_polygon.set_points(inverted);
+	}
 }

@@ -47,11 +47,12 @@ struct draw_struct
 	void 							set_alpha(unsigned int v);
 	void 							set_blend(ldv::representation::blends);
 	void							set_color(ldv::rgb_color);
+	void							set_color(ldv::rgba_color);
 	void 							set_rotation_center(float x, float y);
 	void 							set_rotation(float v) {rep->set_rotation(v);}
 	void							set_external(ldv::representation * prep) {set_external(*prep);}
 	void							set_external(ldv::representation&);
-
+	
 	///////////////////
 	//Group representation manipulation...
 	void 							insert_in_group(ldv::representation * r);
@@ -75,7 +76,7 @@ struct draw_struct
 
 	////////////////////
 	//Polygon manipulation...
-	void							set_polygon_points(const std::vector<ldv::point>& p) {rep_polygon.set_points(p);}
+	void							set_polygon_points(const std::vector<ldv::point>&, bool);
 
 
 	////////////////////

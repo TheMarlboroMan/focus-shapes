@@ -1,9 +1,11 @@
 #include "projectile.h"
 
+#include <tools/converters/converters.h>
+
 using namespace app;
 
-projectile::projectile(const defs::tpoint _p, const defs::tvector _v, defs::tshape_index _si):
-	game_object(_p, _v, _si), angle(0.f) {
+projectile::projectile(const defs::tpoint _p, const defs::tvector _v):
+	spatiable(_p, _v), angle(0.f) {
 
 }
 
@@ -16,15 +18,11 @@ void projectile::step(float _delta) {
 void projectile::transform_draw_struct(draw_struct& _ds) const {
 
 	const auto poly=get_poly(_ds.shape_man);
-/*
-
-	//Now, this poly is convertible to a drawable type-
-	auto drawable_poly=ldt::representation_from_primitive(poly, ldv::rgba8(255, 0, 0, 128));
-
-	_ds.set_type(x);
-	_ds.set_poly(drawable_poly);
+	auto points=ldt::vector_of_representation_points_from_vertices(get_poly(_ds.shape_man).get_vertices());
+	_ds.set_type(draw_struct::types::polygon);
+	_ds.set_polygon_points(points, true);
 	_ds.set_blend(ldv::representation::blends::alpha);
-*/
+	_ds.set_color(ldv::rgba8(255, 0, 0, 128));
 }
 
 defs::tpoly projectile::get_poly(const shape_manager& _shape_man) const {

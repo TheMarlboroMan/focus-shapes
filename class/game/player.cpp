@@ -1,11 +1,12 @@
 #include "player.h"
 
+#include <tools/converters/converters.h> 
+
 using namespace app;
 
 player::player():
-	game_object(defs::tpoint(200, 200), defs::tvector(0,0), defs::square),
+	spatiable(defs::tpoint(0, 0), defs::tvector(0,0)),
 	life{255}, invulnerability_time{0.f} {
-
 }
 
 void player::hit() {
@@ -38,19 +39,16 @@ void player::step(float _delta) {
 
 void player::transform_draw_struct(draw_struct& _ds) const {
 
-	const auto poly=get_poly(_ds.shape_man);
+	auto color=is_invulnerable() 
+		? ldv::rgba8(255, 255, 255, life) 
+		: ldv::rgba8(0, 0, 255, life);
 
-	auto color=_p.is_invulnerable() 
-		? ldv::rgba8(255, 255, 255, _p.get_life()) 
-		: ldv::rgba8(0, 0, 255, _p.get_life());
 
-	auto drawable_poly=ldt::representation_from_primitive(poly, color);
-
-/*
-	_ds.set_type(x);
-	_ds.set_poly(drawable_poly);
+	auto points=ldt::vector_of_representation_points_from_vertices(get_poly(_ds.shape_man).get_vertices());
+	_ds.set_type(draw_struct::types::polygon);
+	_ds.set_polygon_points(points, true);
 	_ds.set_blend(ldv::representation::blends::alpha);
-*/
+	_ds.set_color(color);
 }
 
 defs::tpoly player::get_poly(const shape_manager& _shape_man) const {

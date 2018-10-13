@@ -19,6 +19,18 @@ shapes:[
 			{x:5, y:10}
 		],
 		center: {x:5, y:5}
+	},
+	{
+		name:"pentagon",
+		id:3,
+		vertices:[
+			{x:50, y:90},
+			{x:80, y:60},
+			{x:70, y:20},
+			{x:30, y:20},
+			{x:20, y:60}
+		],
+		center: {x:50, y:50}
 	}
 ],
 other:1

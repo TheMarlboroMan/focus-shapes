@@ -1,28 +1,28 @@
 #ifndef BONUS_H
 #define BONUS_H
 
-#include "game_object.h"
 #include "drawable.h"
+#include "spatiable.h"
 
 namespace app {
 
 class bonus:
-	public game_object,
 	public drawable,
 	public spatiable {
 
 	public:
 
-			bonus(const defs::tpoint, const defs::tvector, defs::tshape_index=defs::square);
+			bonus(const defs::tpoint, const defs::tvector);
+	void		step(float);
+
 
 	//Spatiable implementation
-	defs::tpoly	get_poly(const shape_manager&) const;
+	defs::tpoly		get_poly(const shape_manager&) const;
+	defs::tshape_index	get_shape() const {return defs::square;}
 
 	//Drawable implementation ----------------
 	void		transform_draw_struct(draw_struct&) const;
 
-	//Game object implementation -------------
-	void		step(float);
 	
 	private:
 

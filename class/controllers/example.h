@@ -21,22 +21,12 @@
 //app
 #include "../game/defs.h"
 #include "../game/player_input.h"
-#include "../game/projectile.h"
+#include "../game/world.h"
 #include "../game/player.h"
 #include "../game/shape_manager.h"
 
 namespace app
 {
-
-struct status_keeper {
-
-	defs::tangle	angle;
-
-			status_keeper():
-				angle(0) {
-	
-	}
-};
 
 struct game_data {
 
@@ -67,24 +57,21 @@ class controller_example:
 
 	private:
 
-	typedef	std::unique_ptr<game_object>	tptr_game_object;
-
 	player_input				get_player_input(dfw::input&);
-	void					purge_actors();
-	void					do_player_collision_check(player&, const std::vector<tptr_game_object>&);
+	void					do_player_collision_check(player&, const std::vector<const spatiable *>&);
 
 	//references...
 	tools::log&				log;
 
 	//properties
+	ldv::camera				camera;
 	tools::ttf_manager			ttf_man;
-	status_keeper				skeeper;
+	world					world_instance;
 	game_data				gdata;
 	shape_manager				shape_man;
 	//TODO: Add multiple players????
+	//TODO: Move player to the world???
 	player					player_instance;
-	std::vector<tptr_game_object>		game_objects;
-
 };
 
 }
