@@ -1,6 +1,6 @@
 #include "world.h"
 
-#include <tools/converters/converters.h>
+#include <class/number_generator.h>
 
 using namespace app;
 
@@ -10,6 +10,7 @@ world::world():
 	crap(0.f) {
 
 	projectiles.reserve(max_projectiles);
+	bonuses.reserve(max_bonuses);
 }
 
 void world::step(float _delta, const shape_manager& _shape_man) {
@@ -24,58 +25,68 @@ void world::step(float _delta, const shape_manager& _shape_man) {
 	if(crap > 0.2f) {
 		crap=0.f;
 
-		//TODO: Keep a maximum size of shit!!!!
 
+		tools::int_generator gen(1, 5);
 		defs::tvector v=vector_from_angle_and_magnitude<defs::tunit>(skeeper.angle, 50);
-		projectiles.push_back(
-			tptr_projectile(
-				new projectile(defs::tpoint(350, 200), v)
-			)
-		);
+		
+		if(1!=gen()) {
+			//TODO: Keep a maximum size of shit!!!!
+			projectiles.push_back(
+				tptr_projectile(
+					new projectile(defs::tpoint(350, 200), v)
+				)
+			);
+		}
+		else {
+			//TODO: Keep a maximum size of shit!!!!
+			bonuses.push_back(
+				tptr_bonus(
+					new bonus(defs::tpoint(350, 200), v)
+				)
+			);
+		}
 	}
 
-	for(auto &p : projectiles) {
-		p->step(_delta);
-	}
+	step_list(projectiles, _delta);
+	step_list(bonuses, _delta);
 
 	purge_actors(_shape_man);
 }
 
-void world::add_drawables(std::vector<const drawable *>& v) {
 
-	for(auto &p : projectiles) {
-		v.push_back(p.get());
-	}
+void world::add_drawables(std::vector<const drawable *>& _v) const {
+
+	to_drawable_vector(projectiles, _v);
+	to_drawable_vector(bonuses, _v);
 }
 
 size_t world::get_object_count() const {
 
-	return projectiles.size();
+	return projectiles.size()+bonuses.size();
 }
 
-std::vector<const spatiable*> world::get_collisionables() const {
+std::vector<collisionable *> world::get_collisionables() {
 
-	std::vector<const spatiable *> result;
-
-	for(const auto& p : projectiles) {
-		result.push_back( &(*p));
-	}
-	
+	std::vector<collisionable  *> result;
+	to_collisionable_vector(projectiles, result);
+	to_collisionable_vector(bonuses, result);
 	return result;
 }
 
 void world::purge_actors(const shape_manager& _shape_man) {
 
-	auto check_bound=[this, &_shape_man](const spatiable* _go) {
+	//Erase the erasables...
+	projectiles.erase(
+		std::remove_if(std::begin(projectiles), std::end(projectiles), [](const tptr_projectile& _p) {
+			return _p->must_be_erased();}
+		), std::end(projectiles));
 
-		//TODO: This is a bit absurd... We could just check a center and some margin against the box.
-		const auto poly=_go->get_poly(_shape_man);
-		return !ldt::box_from_poly(poly).collides_with(world_bounds);
-	};
+	bonuses.erase(
+		std::remove_if(std::begin(bonuses), std::end(bonuses), [](const tptr_bonus& _b) {
+			return _b->must_be_erased();}
+		), std::end(bonuses));
 
-	auto it=std::remove_if(std::begin(projectiles), std::end(projectiles), [check_bound](const tptr_projectile& _p) {
-		return check_bound(_p.get());
-	});
-
-	projectiles.erase(it, std::end(projectiles));
+	//Erase whatever is out of bounds...
+	erase_out_of_bounds(projectiles, _shape_man);
+	erase_out_of_bounds(bonuses, _shape_man);
 }

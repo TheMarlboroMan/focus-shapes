@@ -106,17 +106,23 @@ player_input controller_example::get_player_input(dfw::input& _input) {
 	return result;
 }
 
-void controller_example::do_player_collision_check(player& _pl, const std::vector<const spatiable *>& _vs) {
+void controller_example::do_player_collision_check(player& _pl, const std::vector<collisionable *>& _vs) {
 
+	collision_data cdata;
 	const auto player_poly=_pl.get_poly(shape_man);
-	for(const auto& p: _vs) {
+	for(auto& sp: _vs) {
 
-		const auto& go=*p;
-		const auto poly=go.get_poly(shape_man);
+		const auto poly=sp->get_poly(shape_man);
 		if(ldt::SAT_collision_check(player_poly, poly)) {
-
-			//TODO: Will need some more work to separate bonuses and stuff.
-			_pl.hit();
+			sp->confirm_collision(cdata);
 		}
+	}
+
+	if(cdata.hits) {
+		_pl.hit();
+	}
+
+	if(cdata.score) {
+		gdata.score+=cdata.score;
 	}
 }

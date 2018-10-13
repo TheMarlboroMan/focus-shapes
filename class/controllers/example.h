@@ -58,7 +58,7 @@ class controller_example:
 	private:
 
 	player_input				get_player_input(dfw::input&);
-	void					do_player_collision_check(player&, const std::vector<const spatiable *>&);
+	void					do_player_collision_check(player&, const std::vector<collisionable *>&);
 
 	//references...
 	tools::log&				log;

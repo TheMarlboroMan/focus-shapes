@@ -5,7 +5,7 @@
 using namespace app;
 
 bonus::bonus(const defs::tpoint _p, const defs::tvector _v):
-	spatiable(_p, _v) {
+	collisionable(_p, _v) {
 
 }
 
@@ -30,4 +30,12 @@ defs::tpoly bonus::get_poly(const shape_manager& _shape_man) const {
 	poly.rotation_center_in(get_point());
 
 	return poly;
+}
+
+void bonus::confirm_collision(collision_data& _cd) {
+
+	if(!erase_me) {
+		_cd.score+=100;
+		erase_me=true;
+	}
 }

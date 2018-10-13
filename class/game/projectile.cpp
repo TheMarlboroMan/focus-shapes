@@ -5,7 +5,7 @@
 using namespace app;
 
 projectile::projectile(const defs::tpoint _p, const defs::tvector _v):
-	spatiable(_p, _v), angle(0.f) {
+	collisionable(_p, _v), angle(0.f) {
 
 }
 
@@ -34,4 +34,12 @@ defs::tpoly projectile::get_poly(const shape_manager& _shape_man) const {
 	} 
 
 	return poly;
+}
+
+void projectile::confirm_collision(collision_data& _cd) {
+
+	if(!erase_me) {
+		erase_me=true;
+		++_cd.hits;
+	}
 }
