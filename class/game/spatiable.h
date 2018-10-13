@@ -17,12 +17,10 @@ class spatiable {
 	defs::tpoint		get_point() const {return point;}
 	defs::tvector		get_vector() const {return vector;}
 
+	void			set_point(defs::tpoint _v) {point=_v;}
+	void			set_vector(defs::tvector _v) {vector=_v;}
 	void			set_vector_x(defs::tunit _v) {vector.x=_v;}
 	void			set_vector_y(defs::tunit _v) {vector.y=_v;}
-
-
-	protected:
-
 	void			do_motion(float _delta);
 
 	private:

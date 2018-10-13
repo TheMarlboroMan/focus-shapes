@@ -41,7 +41,6 @@ void controller_example::loop(dfw::input& input, const dfw::loop_iteration_data&
 	player_instance.set_input(pi);
 	player_instance.step(lid.delta);
 
-	//TODO: Players should have a "tail" or something.
 	do_player_collision_check(player_instance, world_instance.get_collisionables());
 
 	if(!player_instance.has_life()) {
@@ -57,7 +56,7 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 
 	//Create and fill drawable array...
 	std::vector<const drawable *>	drawables;
-	drawables.push_back(&player_instance);
+	player_instance.add_drawables(drawables);
 	world_instance.add_drawables(drawables);
 
 	draw_struct ds(shape_man);
@@ -67,7 +66,7 @@ void controller_example::draw(ldv::screen& _screen, int _fps) {
 	}
 
 	const auto& font=ttf_man.get("main_font", 10);
-	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), std::to_string(world_instance.get_object_count())+" FPS: "+std::to_string(_fps)); 
+	ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), "OC:"+std::to_string(world_instance.get_object_count())+" PC:"+std::to_string(player_instance.get_spatiables().size())+"FPS: "+std::to_string(_fps)); 
 	txt.draw(_screen);
 
 	//Draw score...
@@ -109,12 +108,14 @@ player_input controller_example::get_player_input(dfw::input& _input) {
 void controller_example::do_player_collision_check(player& _pl, const std::vector<collisionable *>& _vs) {
 
 	collision_data cdata;
-	const auto player_poly=_pl.get_poly(shape_man);
-	for(auto& sp: _vs) {
+	for(const auto& s : _pl.get_spatiables()) {
 
-		const auto poly=sp->get_poly(shape_man);
-		if(ldt::SAT_collision_check(player_poly, poly)) {
-			sp->confirm_collision(cdata);
+		const auto segment_poly=s->get_poly(shape_man);
+		for(auto& sp: _vs) {
+			const auto poly=sp->get_poly(shape_man);
+			if(ldt::SAT_collision_check(segment_poly, poly)) {
+				sp->confirm_collision(cdata);
+			}
 		}
 	}
 
@@ -124,5 +125,7 @@ void controller_example::do_player_collision_check(player& _pl, const std::vecto
 
 	if(cdata.score) {
 		gdata.score+=cdata.score;
+		//TODO: Just for funky purposes: add a segment.
+		_pl.add_segment();
 	}
 }
