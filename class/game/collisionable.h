@@ -9,9 +9,14 @@ namespace app {
 
 struct collision_data {
 
-	int		score=0,
-			hits=0;
-			std::vector<size_t>	hit_list;
+	int			score=0;
+	std::vector<size_t>	hit_list;
+
+	bool			has_hits() const {return hit_list.size();}
+
+	void			add_hit(size_t _i) {
+		hit_list.push_back(_i);
+	}
 };
 
 class collisionable:

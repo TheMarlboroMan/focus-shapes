@@ -36,10 +36,10 @@ defs::tpoly projectile::get_poly(const shape_manager& _shape_man) const {
 	return poly;
 }
 
-void projectile::confirm_collision(collision_data& _cd, size_t /*_index*/) {
+void projectile::confirm_collision(collision_data& _cd, size_t _index) {
 
 	if(!erase_me) {
 		erase_me=true;
-		++_cd.hits;
+		_cd.add_hit(_index);
 	}
 }

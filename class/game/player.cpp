@@ -12,11 +12,23 @@ player::player():
 	segments.push_back({invulnerability_time, {0.,0.}});
 }
 
-void player::hit() {
+void player::hit(size_t _index) {
 
-	if(!invulnerability_time) {
+	//Invulnerable player...
+	if(invulnerability_time) {
+		return;
+	}
+
+	//Hit larger than size (two hits at the same time???).
+	if(_index >= get_length()) {
+		return;
+	}
+
+	//Remove from the segment that was hit to the last.
+	segments.erase(std::begin(segments)+_index, std::end(segments));
+
+	if(segments.size()) {
 		invulnerability_time=inv_time;
-		segments.pop_back();
 	}
 }
 

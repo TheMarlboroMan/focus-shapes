@@ -5,13 +5,13 @@
 using namespace app;
 
 player_segment::player_segment(float& _it, defs::tpoint _pt):
-	spatiable(_pt, defs::tvector(0,0)), invulnerable{_it} {
+	spatiable(_pt, defs::tvector(0,0)), invulnerable{&_it} {
 
 }
 
 void player_segment::transform_draw_struct(draw_struct& _ds) const {
 
-	auto color=invulnerable
+	auto color=*invulnerable
 		? ldv::rgba8(255, 255, 255, 255) 
 		: ldv::rgba8(0, 0, 255, 128);
 

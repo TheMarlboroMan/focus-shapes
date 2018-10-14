@@ -152,10 +152,11 @@ void controller_example::do_player_collision_check(player& _pl, const std::vecto
 		++index;
 	}
 
-	if(cdata.hits) {
-		//TODO: Add the segment index that was hit: 
-		//remove that one and the rest.
-		_pl.hit();
+	if(cdata.has_hits()) {
+
+		for(const size_t hit : cdata.hit_list) {
+			_pl.hit(hit);
+		}
 	}
 
 	if(cdata.score) {

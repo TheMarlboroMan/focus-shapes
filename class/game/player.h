@@ -20,7 +20,7 @@ class player {
 	size_t		get_length() const {return segments.size();}
 
 	void		add_drawables(std::vector<drawable const *>&);
-	void		hit();
+	void		hit(size_t);
 	void		set_input(const player_input _pi);
 	void		step(float _delta);
 	void		add_segment();

@@ -22,7 +22,7 @@ class player_segment:
 
 	private:
 
-	const float&		invulnerable;
+	const float *		invulnerable;
 };
 
 
