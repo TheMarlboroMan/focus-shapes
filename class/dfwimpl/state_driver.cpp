@@ -7,9 +7,7 @@
 #include <class/dnot_parser.h>
 #include <source/string_utils.h>
 
-#ifdef WDEBUG_CODE
 #include "../input.h"
-#endif
 
 using namespace app;
 

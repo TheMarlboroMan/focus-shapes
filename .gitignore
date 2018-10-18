@@ -2,4 +2,6 @@ objects/*
 logs/*
 scripts/*
 *.out
+*.exe
+*.dll
 GETTING_STARTED.txt
