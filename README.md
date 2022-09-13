@@ -1,3 +1,13 @@
+# focus-shapes
+
+A project of ability and focus
+
+# what is this supposed to be
+
+A game in which the objective is to survive wave after wave of generated projectiles, a-la bullet hell. It is still unfinished.
+
+# TODO: 
+
 - Create different projectile types:
 	- Actually, not so much projectile types, but "movement engines".
 		- Straight.
